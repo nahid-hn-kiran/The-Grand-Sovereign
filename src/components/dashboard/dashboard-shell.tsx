@@ -6,6 +6,7 @@ import { usePathname } from "next/navigation";
 import {
   Crown,
   LayoutDashboard,
+  CalendarDays,
   BedDouble,
   Bot,
   ConciergeBell,
@@ -38,6 +39,12 @@ const navItems: NavItem[] = [
     href: "/admin",
     icon: LayoutDashboard,
     roles: ["SUPER_ADMIN", "ADMIN"],
+  },
+  {
+    title: "Master Bookings",
+    href: "/admin/bookings",
+    icon: CalendarDays,
+    roles: ["SUPER_ADMIN", "ADMIN", "FRONT_DESK"],
   },
   {
     title: "Room Inventory",
