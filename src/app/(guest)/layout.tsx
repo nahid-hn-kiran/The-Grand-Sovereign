@@ -1,4 +1,5 @@
 import { ConciergeDrawer } from "@/components/concierge/concierge-drawer";
+import { Footer } from "@/components/layout/footer";
 
 export default function GuestLayout({
   children,
@@ -9,6 +10,7 @@ export default function GuestLayout({
     <>
       {children}
       <ConciergeDrawer />
+      <Footer />
     </>
   );
 }
