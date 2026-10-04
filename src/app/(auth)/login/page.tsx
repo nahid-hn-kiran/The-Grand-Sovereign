@@ -11,7 +11,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 
-export default function LoginPage() {
+function LoginFormContent() {
   const { login, isLoading } = useAuth();
   const searchParams = useSearchParams();
 
@@ -184,5 +184,13 @@ export default function LoginPage() {
         </div>
       </motion.div>
     </div>
+  );
+}
+
+export default function LoginPage() {
+  return (
+    <React.Suspense fallback={<div className="min-h-[calc(100vh-5rem)] flex items-center justify-center">Loading...</div>}>
+      <LoginFormContent />
+    </React.Suspense>
   );
 }

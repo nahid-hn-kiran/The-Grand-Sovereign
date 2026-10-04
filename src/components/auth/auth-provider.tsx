@@ -32,12 +32,13 @@ function getRedirectPathForRole(role: UserRole): string {
   }
 }
 
-interface AuthProviderProps {
+function AuthProviderContent({
+  children,
+  initialUser,
+}: {
   children: React.ReactNode;
-  initialUser?: User | null;
-}
-
-export function AuthProvider({ children, initialUser = null }: AuthProviderProps) {
+  initialUser: User | null;
+}) {
   const [user, setUser] = React.useState<User | null>(initialUser);
   const [isLoading, setIsLoading] = React.useState<boolean>(false);
   const router = useRouter();
@@ -153,4 +154,18 @@ export function AuthProvider({ children, initialUser = null }: AuthProviderProps
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
+}
+
+export function AuthProvider({
+  children,
+  initialUser = null,
+}: {
+  children: React.ReactNode;
+  initialUser?: User | null;
+}) {
+  return (
+    <React.Suspense fallback={null}>
+      <AuthProviderContent initialUser={initialUser}>{children}</AuthProviderContent>
+    </React.Suspense>
+  );
 }
