@@ -91,8 +91,8 @@ function AuthProviderContent({
       const defaultPath = getRedirectPathForRole(authenticatedUser.role);
       const targetPath = redirectParam || defaultPath;
 
-      router.push(targetPath);
       router.refresh();
+      router.push(targetPath);
       return authenticatedUser;
     } finally {
       setIsLoading(false);
@@ -115,8 +115,8 @@ function AuthProviderContent({
         setUser(registeredUser);
         const redirectParam = searchParams?.get("redirect");
         const defaultPath = getRedirectPathForRole(registeredUser.role);
-        router.push(redirectParam || defaultPath);
         router.refresh();
+        router.push(redirectParam || defaultPath);
         return registeredUser;
       }
 
@@ -135,8 +135,8 @@ function AuthProviderContent({
     } finally {
       setUser(null);
       setIsLoading(false);
-      router.push("/login");
       router.refresh();
+      router.push("/login");
     }
   };
 
