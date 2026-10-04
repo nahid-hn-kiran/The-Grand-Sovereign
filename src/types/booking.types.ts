@@ -1,0 +1,33 @@
+import { Room } from "./room.types";
+
+export type BookingStatus =
+  | "PENDING_PAYMENT"
+  | "CONFIRMED"
+  | "CHECKED_IN"
+  | "CHECKED_OUT"
+  | "CANCELLED";
+
+export interface Booking {
+  id: string;
+  bookingCode: string;
+  guestId: string;
+  roomId: string;
+  checkInDate: string;
+  checkOutDate: string;
+  totalAmount: number;
+  status: BookingStatus;
+  room?: Room;
+  createdAt: string;
+}
+
+export interface AvailabilityResult {
+  availableCount: number;
+  rooms: Room[];
+}
+
+export interface CreateBookingPayload {
+  roomTypeId: string;
+  checkInDate: string;
+  checkOutDate: string;
+  guestsCount?: number;
+}
