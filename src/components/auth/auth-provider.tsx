@@ -3,7 +3,12 @@
 import * as React from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { apiClient, ApiError } from "@/lib/api-client";
-import { User, LoginCredentials, RegisterCredentials, UserRole } from "@/types/auth.types";
+import {
+  User,
+  LoginCredentials,
+  RegisterCredentials,
+  UserRole,
+} from "@/types/auth.types";
 
 interface AuthContextType {
   user: User | null;
@@ -47,7 +52,9 @@ function AuthProviderContent({
   const refreshUser = React.useCallback(async (): Promise<User | null> => {
     setIsLoading(true);
     try {
-      const res = await apiClient.get<User | { data: User } | { user: User }>("/auth/me");
+      const res = await apiClient.get<User | { data: User } | { user: User }>(
+        "/auth/me",
+      );
       const fetchedUser =
         (res as { data?: User; user?: User }).data ||
         (res as { data?: User; user?: User }).user ||
@@ -74,7 +81,7 @@ function AuthProviderContent({
     try {
       const res = await apiClient.post<User | { data: User } | { user: User }>(
         "/auth/login",
-        credentials
+        credentials,
       );
       const authenticatedUser =
         (res as { data?: User; user?: User }).data ||
@@ -104,7 +111,7 @@ function AuthProviderContent({
     try {
       const res = await apiClient.post<User | { data: User } | { user: User }>(
         "/auth/register",
-        credentials
+        credentials,
       );
       const registeredUser =
         (res as { data?: User; user?: User }).data ||
@@ -120,7 +127,10 @@ function AuthProviderContent({
         return registeredUser;
       }
 
-      return await login({ email: credentials.email, password: credentials.password });
+      return await login({
+        email: credentials.email,
+        password: credentials.password,
+      });
     } finally {
       setIsLoading(false);
     }
@@ -150,7 +160,7 @@ function AuthProviderContent({
       logout,
       refreshUser,
     }),
-    [user, isLoading, refreshUser]
+    [user, isLoading, refreshUser],
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
@@ -165,7 +175,9 @@ export function AuthProvider({
 }) {
   return (
     <React.Suspense fallback={null}>
-      <AuthProviderContent initialUser={initialUser}>{children}</AuthProviderContent>
+      <AuthProviderContent initialUser={initialUser}>
+        {children}
+      </AuthProviderContent>
     </React.Suspense>
   );
 }
