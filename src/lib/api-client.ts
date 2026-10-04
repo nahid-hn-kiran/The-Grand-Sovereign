@@ -24,14 +24,15 @@ export interface RequestOptions extends Omit<RequestInit, "body"> {
   body?: unknown;
 }
 
-const BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000/api/v1";
+const RAW_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000/api/v1";
+const BASE_URL = RAW_BASE_URL.replace(/\/+$/, "");
 
 async function request<T>(endpoint: string, options: RequestOptions = {}): Promise<T> {
   const { params, body, headers: customHeaders, ...customConfig } = options;
 
   let url = endpoint.startsWith("http")
     ? endpoint
-    : `${BASE_URL}${endpoint.startsWith("/") ? "" : "/"}${endpoint}`;
+    : `${BASE_URL}${endpoint.startsWith("/") ? endpoint : `/${endpoint}`}`;
 
   if (params) {
     const searchParams = new URLSearchParams();
