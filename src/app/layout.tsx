@@ -33,12 +33,12 @@ export default async function RootLayout({
 }>) {
   let initialUser: User | null = null;
   try {
-    const res = await apiClient.get<User | { data: User } | { user: User }>("/auth/me");
-    initialUser =
-      (res as { data?: User; user?: User }).data ||
-      (res as { data?: User; user?: User }).user ||
-      (res as User);
-    if (!initialUser?.id) initialUser = null;
+    const res = await apiClient.get<any>("/auth/me");
+    const data = res?.data ?? res;
+    const user = data?.user ?? data;
+    if (user && typeof user === "object" && user.id) {
+      initialUser = user as User;
+    }
   } catch {
     initialUser = null;
   }

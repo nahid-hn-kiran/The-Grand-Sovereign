@@ -37,6 +37,16 @@ function getRedirectPathForRole(role: UserRole): string {
   }
 }
 
+function extractUser(res: any): User | null {
+  if (!res) return null;
+  const data = res.data ?? res;
+  const user = data.user ?? data;
+  if (user && typeof user === "object" && user.id) {
+    return user as User;
+  }
+  return null;
+}
+
 function AuthProviderContent({
   children,
   initialUser,
@@ -52,14 +62,8 @@ function AuthProviderContent({
   const refreshUser = React.useCallback(async (): Promise<User | null> => {
     setIsLoading(true);
     try {
-      const res = await apiClient.get<User | { data: User } | { user: User }>(
-        "/auth/me",
-      );
-      const fetchedUser =
-        (res as { data?: User; user?: User }).data ||
-        (res as { data?: User; user?: User }).user ||
-        (res as User);
-      const validUser = fetchedUser && fetchedUser.id ? fetchedUser : null;
+      const res = await apiClient.get("/auth/me");
+      const validUser = extractUser(res);
       setUser(validUser);
       return validUser;
     } catch {
@@ -79,16 +83,10 @@ function AuthProviderContent({
   const login = async (credentials: LoginCredentials): Promise<User> => {
     setIsLoading(true);
     try {
-      const res = await apiClient.post<User | { data: User } | { user: User }>(
-        "/auth/login",
-        credentials,
-      );
-      const authenticatedUser =
-        (res as { data?: User; user?: User }).data ||
-        (res as { data?: User; user?: User }).user ||
-        (res as User);
+      const res = await apiClient.post("/auth/login", credentials);
+      const authenticatedUser = extractUser(res);
 
-      if (!authenticatedUser || !authenticatedUser.id) {
+      if (!authenticatedUser) {
         throw new ApiError("Invalid response format from login endpoint", 500);
       }
 
@@ -109,16 +107,10 @@ function AuthProviderContent({
   const register = async (credentials: RegisterCredentials): Promise<User> => {
     setIsLoading(true);
     try {
-      const res = await apiClient.post<User | { data: User } | { user: User }>(
-        "/auth/register",
-        credentials,
-      );
-      const registeredUser =
-        (res as { data?: User; user?: User }).data ||
-        (res as { data?: User; user?: User }).user ||
-        (res as User);
+      const res = await apiClient.post("/auth/register", credentials);
+      const registeredUser = extractUser(res);
 
-      if (registeredUser && registeredUser.id) {
+      if (registeredUser) {
         setUser(registeredUser);
         const redirectParam = searchParams?.get("redirect");
         const defaultPath = getRedirectPathForRole(registeredUser.role);
