@@ -2,8 +2,11 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "@/components/theme/theme-provider";
+import { AuthProvider } from "@/components/auth/auth-provider";
 import { Navbar } from "@/components/layout/navbar";
 import { siteConfig } from "@/content/site.config";
+import { apiClient } from "@/lib/api-client";
+import { User } from "@/types/auth.types";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -23,11 +26,23 @@ export const metadata: Metadata = {
   description: siteConfig.description,
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  let initialUser: User | null = null;
+  try {
+    const res = await apiClient.get<User | { data: User } | { user: User }>("/auth/me");
+    initialUser =
+      (res as { data?: User; user?: User }).data ||
+      (res as { data?: User; user?: User }).user ||
+      (res as User);
+    if (!initialUser?.id) initialUser = null;
+  } catch {
+    initialUser = null;
+  }
+
   return (
     <html lang="en" suppressHydrationWarning>
       <body
@@ -39,8 +54,10 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          <Navbar />
-          <main className="flex-1">{children}</main>
+          <AuthProvider initialUser={initialUser}>
+            <Navbar />
+            <main className="flex-1">{children}</main>
+          </AuthProvider>
         </ThemeProvider>
       </body>
     </html>
