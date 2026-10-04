@@ -65,36 +65,45 @@ export default function CheckoutPage() {
     setIsProcessing(true);
     setErrorMessage(null);
     try {
-      const res = await apiClient.post<{ paymentUrl?: string; gatewayUrl?: string; redirectUrl?: string; url?: string }>("/payments/init", {
+      const res = await apiClient.post<{ checkoutUrl?: string; paymentGatewayUrl?: string }>("/payments/init", {
         bookingId,
         provider,
       });
 
-      const redirectUrl = res.paymentUrl || res.gatewayUrl || res.redirectUrl || res.url;
-      if (redirectUrl) {
-        window.location.href = redirectUrl;
+      const data = (res as any)?.data || res;
+      const checkoutUrl = data?.checkoutUrl || data?.paymentGatewayUrl || (res as any)?.checkoutUrl || (res as any)?.paymentGatewayUrl;
+
+      if (checkoutUrl) {
+        window.location.href = checkoutUrl;
       } else {
-        setBooking((prev) => (prev ? { ...prev, status: "CONFIRMED" } : null));
-        router.push(`/bookings?status=confirmed`);
+        throw new ApiError("Gateway URL not returned from backend", 500);
       }
     } catch (err: unknown) {
-      const msg = err instanceof ApiError ? err.message : "Payment gateway initialization failed. Simulating confirmation...";
-      console.warn(msg);
-      setBooking((prev) => (prev ? { ...prev, status: "CONFIRMED" } : null));
-      router.push(`/bookings?status=confirmed`);
-    } finally {
+      const msg = err instanceof ApiError ? err.message : "Payment gateway initialization failed.";
+      setErrorMessage(msg);
       setIsProcessing(false);
     }
   };
 
-  if (isLoading) {
+  if (isLoading || isProcessing) {
     return (
       <div className="min-h-[calc(100vh-5rem)] flex items-center justify-center">
-        <div className="text-center space-y-3">
-          <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-primary/10 text-primary mx-auto animate-pulse">
-            <Crown className="h-6 w-6" />
+        <div className="text-center space-y-4">
+          <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-primary/10 text-primary mx-auto">
+            {isProcessing ? (
+              <CreditCard className="h-7 w-7 animate-bounce text-primary" />
+            ) : (
+              <Crown className="h-7 w-7 animate-pulse text-primary" />
+            )}
           </div>
-          <p className="text-sm font-medium text-muted-foreground">Preparing Sovereign Reservation Itinerary...</p>
+          <div className="space-y-1">
+            <h3 className="font-serif text-xl font-bold text-foreground">
+              {isProcessing ? "Redirecting to Secure Gateway..." : "Preparing Sovereign Reservation Itinerary..."}
+            </h3>
+            <p className="text-xs text-muted-foreground">
+              {isProcessing ? "Connecting to your selected payment provider..." : "Fetching stay details..."}
+            </p>
+          </div>
         </div>
       </div>
     );
