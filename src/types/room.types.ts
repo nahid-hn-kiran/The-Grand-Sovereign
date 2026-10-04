@@ -22,3 +22,5 @@ export interface Room {
   roomTypeId: string;
   roomType?: RoomType;
 }
+
+export type PhysicalRoom = Room;

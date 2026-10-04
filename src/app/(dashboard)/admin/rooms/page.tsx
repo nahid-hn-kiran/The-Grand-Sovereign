@@ -235,7 +235,7 @@ export default function AdminPhysicalRoomsPage() {
                 </tr>
               ) : (
                 filteredRooms.map((room) => {
-                  const statusInfo = STATUS_CONFIG[room.status] || STATUS_CONFIG.VACANT_CLEAN;
+                  const statusInfo = STATUS_CONFIG[room.status as RoomStatus] || STATUS_CONFIG.VACANT_CLEAN;
                   const Icon = statusInfo.icon;
                   const suiteTier = room.roomType || roomTypes.find((t) => t.id === room.roomTypeId);
 

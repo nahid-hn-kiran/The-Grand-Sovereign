@@ -7,6 +7,22 @@ export type BookingStatus =
   | "CHECKED_OUT"
   | "CANCELLED";
 
+export interface BookingPayment {
+  id: string;
+  amount: number;
+  provider: string;
+  transactionId: string;
+  status: string;
+  createdAt?: string;
+}
+
+export interface BookingGuest {
+  id: string;
+  name?: string;
+  email?: string;
+  role?: string;
+}
+
 export interface Booking {
   id: string;
   bookingCode: string;
@@ -17,7 +33,10 @@ export interface Booking {
   totalAmount: number;
   status: BookingStatus;
   room?: Room;
+  guest?: BookingGuest;
+  payments?: BookingPayment[];
   createdAt: string;
+  updatedAt?: string;
 }
 
 export interface AvailabilityResult {
