@@ -47,10 +47,27 @@ async function request<T>(endpoint: string, options: RequestOptions = {}): Promi
     }
   }
 
-  const defaultHeaders: Record<string, string> = {
-    "Content-Type": "application/json",
-    Accept: "application/json",
-  };
+  const headers = new Headers();
+  headers.set("Content-Type", "application/json");
+  headers.set("Accept", "application/json");
+
+  if (customHeaders) {
+    if (customHeaders instanceof Headers) {
+      customHeaders.forEach((value, key) => {
+        headers.set(key, value);
+      });
+    } else if (Array.isArray(customHeaders)) {
+      customHeaders.forEach(([key, value]) => {
+        headers.set(key, value);
+      });
+    } else {
+      Object.entries(customHeaders).forEach(([key, value]) => {
+        if (value !== undefined) {
+          headers.set(key, String(value));
+        }
+      });
+    }
+  }
 
   if (typeof window === "undefined") {
     try {
@@ -58,7 +75,7 @@ async function request<T>(endpoint: string, options: RequestOptions = {}): Promi
       const cookieStore = await cookies();
       const cookieHeader = cookieStore.toString();
       if (cookieHeader) {
-        defaultHeaders["Cookie"] = cookieHeader;
+        headers.set("Cookie", cookieHeader);
       }
     } catch {
       // Ignore outside request context
@@ -67,10 +84,7 @@ async function request<T>(endpoint: string, options: RequestOptions = {}): Promi
 
   const config: RequestInit = {
     method: "GET",
-    headers: {
-      ...defaultHeaders,
-      ...customHeaders,
-    },
+    headers,
     credentials: "include",
     ...customConfig,
   };

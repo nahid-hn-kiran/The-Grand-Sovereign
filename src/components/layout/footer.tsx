@@ -1,6 +1,6 @@
-import Link from "next/link";
-import { Crown, Mail, Phone, MapPin } from "lucide-react";
 import { siteConfig } from "@/content/site.config";
+import { Crown, Mail, MapPin, Phone } from "lucide-react";
+import Link from "next/link";
 
 export function Footer() {
   return (
@@ -35,7 +35,10 @@ export function Footer() {
             <ul className="space-y-2.5 text-xs">
               {siteConfig.nav.main.map((item) => (
                 <li key={item.href}>
-                  <Link href={item.href} className="text-muted-foreground hover:text-primary transition-colors">
+                  <Link
+                    href={item.href}
+                    className="text-muted-foreground hover:text-primary transition-colors"
+                  >
                     {item.title}
                   </Link>
                 </li>
@@ -51,7 +54,10 @@ export function Footer() {
             <ul className="space-y-2.5 text-xs">
               {siteConfig.nav.footer.map((item) => (
                 <li key={item.href}>
-                  <Link href={item.href} className="text-muted-foreground hover:text-primary transition-colors">
+                  <Link
+                    href={item.href}
+                    className="text-muted-foreground hover:text-primary transition-colors"
+                  >
                     {item.title}
                   </Link>
                 </li>
@@ -67,7 +73,8 @@ export function Footer() {
             <div className="flex items-start gap-2 text-xs text-muted-foreground">
               <MapPin className="h-4 w-4 shrink-0 text-primary mt-0.5" />
               <span>
-                {siteConfig.address.street}, {siteConfig.address.city}, {siteConfig.address.state} {siteConfig.address.zip}
+                {siteConfig.address.street}, {siteConfig.address.city},{" "}
+                {siteConfig.address.state} {siteConfig.address.zip}
               </span>
             </div>
             <div className="flex items-center gap-2 text-xs text-muted-foreground">
@@ -82,8 +89,12 @@ export function Footer() {
         </div>
 
         <div className="mt-12 border-t border-border/30 pt-6 flex flex-col sm:flex-row items-center justify-between text-xs text-muted-foreground gap-4">
-          <p>© {new Date().getFullYear()} {siteConfig.name}. All rights reserved.</p>
-          <p className="font-mono text-[11px]">Designed for Ultimate Luxury & Experience</p>
+          <p>
+            © {new Date().getFullYear()} {siteConfig.name}. All rights reserved.
+          </p>
+          <p className="font-mono text-[11px]">
+            Designed for Ultimate Luxury & Experience
+          </p>
         </div>
       </div>
     </footer>
